@@ -3,22 +3,20 @@
 # generate.sh — re-apply the AskUserQuestion delta onto the CURRENT spec-kit core
 # commands and write the merged result into ../commands/.
 #
-# This is what makes the preset core-update-safe: instead of freezing a full copy
-# of speckit.clarify / speckit.checklist, we keep only the small semantic delta
-# (../delta/*.delta.md) and surgically merge it into whatever core is installed,
-# via `claude -p`. Run this after upgrading spec-kit core, then commit the result.
+# Runs `specify init` in a temp directory to obtain the current core commands
+# (matching the installed spec-kit version), then merges the delta via `claude -p`.
+# Run this after upgrading spec-kit, then commit commands/ and tag a new release.
 #
 # Usage:
 #   scripts/generate.sh [--core-dir DIR] [--model MODEL] [--check]
 #
-#   --core-dir DIR   Directory (searched recursively) holding the current core
-#                    speckit.clarify.md / speckit.checklist.md. If omitted, a set
-#                    of common locations is auto-detected (see find_core()).
+#   --core-dir DIR   Skip `specify init` and point directly at the .claude/skills/
+#                    directory of an existing spec-kit project.
 #   --model MODEL    Model passed to `claude -p` (default: claude-sonnet-4-6).
 #   --check          Generate to a temp file and diff against the committed
 #                    command instead of overwriting (non-zero exit if they differ).
 #
-# Requires: bash, claude CLI on PATH.
+# Requires: bash, specify CLI, claude CLI on PATH.
 
 set -euo pipefail
 
@@ -31,7 +29,11 @@ CORE_DIR=""
 MODEL="claude-sonnet-4-6"
 CHECK=0
 
-# Commands this preset overrides. Add a line here if the preset grows.
+# Maps output command name → skill directory name inside .claude/skills/
+declare -A SKILL_DIR=(
+  [speckit.clarify]=speckit-clarify
+  [speckit.checklist]=speckit-checklist
+)
 COMMANDS=(speckit.clarify speckit.checklist)
 
 err()  { printf 'error: %s\n' "$*" >&2; }
@@ -47,35 +49,40 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-command -v claude >/dev/null 2>&1 || { err "the 'claude' CLI is not on PATH"; exit 1; }
+command -v claude  >/dev/null 2>&1 || { err "'claude' CLI is not on PATH"; exit 1; }
+command -v specify >/dev/null 2>&1 || { err "'specify' CLI is not on PATH"; exit 1; }
 
-# Resolve the current core file for a command name by searching likely locations.
-# Echoes the resolved path on stdout, or exits non-zero if not found.
+SCRATCH=""
+cleanup() { [[ -n "$SCRATCH" ]] && rm -rf "$SCRATCH"; }
+trap cleanup EXIT
+
+# If no --core-dir given, bootstrap a scratch spec-kit project to get current core.
+if [[ -z "$CORE_DIR" ]]; then
+  SCRATCH="$(mktemp -d)"
+  info "bootstrapping scratch spec-kit project to extract core commands..."
+  specify init "$SCRATCH/core" --integration claude --script sh --no-git --ignore-agent-tools \
+    >/dev/null 2>&1
+  CORE_DIR="$SCRATCH/core/.claude/skills"
+  info "core skills at $CORE_DIR"
+fi
+
+mkdir -p "$OUT_DIR"
+
+# Locate the SKILL.md for a given command name under CORE_DIR.
 find_core() {
-  local name="$1" base d hit
-  base="$name.md"
-
-  local roots=()
-  [[ -n "$CORE_DIR" ]] && roots+=("$CORE_DIR")
-  # Auto-detect: search from the project that contains this preset checkout, and CWD.
-  roots+=(
-    "$PWD"
-    "$PWD/.specify/templates/commands"
-    "$PWD/.claude/commands"
-    "$PWD/templates/commands"
-    "$PRESET_DIR/../../.specify/templates/commands"
-  )
-
-  for d in "${roots[@]}"; do
-    [[ -d "$d" ]] || continue
-    # Prefer an exact filename match closest to the root, but never pick a file
-    # from inside this preset's own commands/ (that would merge against ourselves).
-    hit="$(find "$d" -type f -name "$base" 2>/dev/null \
-            | grep -v "$OUT_DIR/" \
-            | grep -v "$DELTA_DIR/" \
-            | sort | head -n1 || true)"
-    [[ -n "$hit" ]] && { printf '%s\n' "$hit"; return 0; }
-  done
+  local name="$1" skill_dir hit
+  skill_dir="${SKILL_DIR[$name]:-}"
+  if [[ -n "$skill_dir" ]]; then
+    hit="$CORE_DIR/$skill_dir/SKILL.md"
+    [[ -f "$hit" ]] && { printf '%s\n' "$hit"; return 0; }
+  fi
+  # Fallback: search recursively (handles --core-dir pointing at commands/ directly)
+  hit="$(find "$CORE_DIR" -type f \( -name "SKILL.md" -o -name "$name.md" \) 2>/dev/null \
+          | grep -v "$OUT_DIR/" \
+          | grep -v "$DELTA_DIR/" \
+          | grep -i "${skill_dir:-$name}" \
+          | sort | head -n1 || true)"
+  [[ -n "$hit" ]] && { printf '%s\n' "$hit"; return 0; }
   return 1
 }
 
@@ -126,15 +133,13 @@ for name in "${COMMANDS[@]}"; do
   [[ -f "$delta_file" ]] || { err "missing delta: $delta_file"; status=1; continue; }
 
   if ! core_file="$(find_core "$name")"; then
-    err "could not locate current core for '$name' (pass --core-dir)"
-    status=1
-    continue
+    err "could not locate core skill for '$name' under $CORE_DIR"
+    status=1; continue
   fi
   info "$name: merging delta into $core_file"
 
   tmp="$(mktemp)"
-  build_prompt "$core_file" "$delta_file" \
-    | claude -p --model "$MODEL" \
+  claude -p "$(build_prompt "$core_file" "$delta_file")" --model "$MODEL" \
     | strip_fence > "$tmp"
 
   if [[ ! -s "$tmp" ]]; then

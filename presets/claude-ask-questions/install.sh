@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Generate the merged commands then install the preset.
-# Usage: install.sh [--core-dir DIR] [--model MODEL]
+# Local dev install: generate commands/ then register the preset.
+# Usage: install.sh [--model MODEL] [--core-dir DIR]
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 "$SCRIPT_DIR/scripts/generate.sh" "$@"

@@ -36,8 +36,9 @@ declare -A SKILL_DIR=(
 )
 COMMANDS=(speckit.clarify speckit.checklist)
 
-err()  { printf 'error: %s\n' "$*" >&2; }
-info() { printf '• %s\n' "$*" >&2; }
+START_TIME=$(date +%s)
+err()  { printf '[%s +%3ds] error: %s\n' "$(date +%H:%M:%S)" "$(($(date +%s) - START_TIME))" "$*" >&2; }
+info() { printf '[%s +%3ds] • %s\n'      "$(date +%H:%M:%S)" "$(($(date +%s) - START_TIME))" "$*" >&2; }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in

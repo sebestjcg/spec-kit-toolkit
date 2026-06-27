@@ -43,8 +43,11 @@ The delta files are the durable source of truth.
 ## Installation
 
 ```bash
-specify preset add --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/v0.4.0/claude-ask-questions-1.0.0.zip
+specify preset add --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/v0.6.0/claude-ask-questions-0.8.17.zip
 ```
+
+The zip filename reflects the spec-kit version the commands were generated against.
+Check the [releases page](https://github.com/sebestjcg/spec-kit-toolkit/releases) for the latest tag and filename.
 
 Or from a local clone:
 
@@ -57,20 +60,18 @@ specify preset add --dev ./presets/claude-ask-questions
 After upgrading spec-kit, regenerate `commands/`, package, and publish:
 
 ```bash
-# 1. Regenerate commands/ against current spec-kit (runs specify init internally)
+# 1. Regenerate commands/ against current spec-kit (also stamps preset.yml version)
 presets/claude-ask-questions/scripts/generate.sh
 
-# 2. Build the distributable zip (preset.yml at root)
-scripts/package.sh
-
-# 3. Bump version in preset.yml and CHANGELOG.md, then commit and tag
+# 2. Commit and tag
 git add presets/claude-ask-questions/
 git commit -m "chore: regenerate commands against spec-kit vX.Y.Z"
 git tag vX.Y.Z && git push --tags
 
-# 4. Upload dist/claude-ask-questions-<version>.zip as a GitHub Release asset
+# 3. Build zip and publish GitHub Release (auto-detects tag from HEAD)
+scripts/package.sh
 
-# 5. Update the --from URL in this README to point at the new release
+# 4. Update the --from URL in this README with the new tag
 ```
 
 Requires `specify` and `claude` CLIs on `PATH`. Pass `--core-dir` to

@@ -66,6 +66,15 @@ if [[ -z "$CORE_DIR" ]]; then
   info "core skills at $CORE_DIR"
 fi
 
+# Detect spec-kit version and stamp it into preset.yml.
+speckit_version="$(specify --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+'| head -n1 || true)"
+if [[ -n "$speckit_version" ]]; then
+  sed -i "s/^  version: \".*\"/  version: \"$speckit_version\"/" "$PRESET_DIR/preset.yml"
+  info "preset version set to $speckit_version (spec-kit version)"
+else
+  err "could not detect spec-kit version — preset.yml version left unchanged"
+fi
+
 mkdir -p "$OUT_DIR"
 
 # Locate the SKILL.md for a given command name under CORE_DIR.

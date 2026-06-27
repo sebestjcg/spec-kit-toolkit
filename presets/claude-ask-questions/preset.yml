@@ -3,7 +3,7 @@ schema_version: "1.0"
 preset:
   id: "claude-ask-questions"
   name: "Claude AskUserQuestion"
-  version: "1.0.0"
+  version: "0.8.17"
   description: "Upgrades /speckit.clarify and /speckit.checklist on Claude Code from Markdown-table prompts to the native AskUserQuestion picker, with a recommended option and reasoning on every question."
   author: "sebestjcg"
   repository: "https://github.com/sebestjcg/spec-kit-toolkit"

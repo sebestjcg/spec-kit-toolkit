@@ -152,7 +152,7 @@ Execution steps:
           - Append a final option `{label: "Short", description: "Provide my own short answer (≤5 words)"}` to preserve the free-form escape hatch.
           - `multiSelect`: `false`.
        - If the user selects the "Short" option, ask a follow-up free-text question constrained to ≤5 words.
-     - For short‑answer style (no meaningful discrete options):
+    - For short‑answer style (no meaningful discrete options):
        - Determine your **suggested answer** based on best practices and context.
        - Use the `AskUserQuestion` tool:
           - `question`: `"Suggested: <your proposed answer> — <brief reasoning>\n\n<question text>\nFormat: Short answer (≤5 words)."`

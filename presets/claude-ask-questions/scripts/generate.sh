@@ -89,20 +89,19 @@ find_core() {
 build_prompt() {
   local core_file="$1" delta_file="$2"
   cat <<EOF
-You are applying a semantic patch to a spec-kit command file.
+Apply the DELTA edits to the CORE COMMAND file and emit the result.
 
-Below are two documents:
-  1. CORE COMMAND — the current, authoritative command file.
-  2. DELTA — a description of the ONLY edits to apply.
+CRITICAL OUTPUT RULE: Your entire response must be the modified file content
+and nothing else. Do not write any introduction, explanation, summary, or
+commentary — not even a single sentence. The very first character of your
+response must be the first character of the file (the opening "---" of the
+YAML front matter). If you write anything before that, the output is broken.
 
-Apply the delta to the core command and output the resulting merged file.
-
-Hard requirements:
-- Output ONLY the merged command file content. No commentary, no explanation,
-  and do NOT wrap it in a Markdown code fence.
-- Apply ONLY the transforms described in the DELTA. Preserve every other
-  character of the CORE COMMAND exactly — front matter, scripts, headings,
-  ordering, and whitespace included.
+Editing rules:
+- Apply ONLY the transforms described in the DELTA.
+- Preserve every other character of the CORE COMMAND exactly — front matter,
+  scripts, headings, ordering, and whitespace included.
+- Do NOT wrap the output in a Markdown code fence.
 - If a transform's target block is not present in the CORE COMMAND, skip it.
 
 ===== CORE COMMAND =====
@@ -144,6 +143,13 @@ for name in "${COMMANDS[@]}"; do
 
   if [[ ! -s "$tmp" ]]; then
     err "$name: claude produced empty output"
+    rm -f "$tmp"; status=1; continue
+  fi
+
+  # Validate output looks like a command file, not a commentary summary.
+  if ! head -n1 "$tmp" | grep -q '^---'; then
+    err "$name: output does not start with YAML front matter ('---') — claude wrote commentary instead of the file"
+    err "  first line: $(head -n1 "$tmp")"
     rm -f "$tmp"; status=1; continue
   fi
 

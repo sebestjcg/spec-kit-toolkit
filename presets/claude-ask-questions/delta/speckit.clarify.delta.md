@@ -11,6 +11,13 @@ this preset makes to the core `speckit.clarify` command. The generator
   command — front matter, scripts, handoffs, headings, ordering, whitespace,
   the ambiguity taxonomy, the 5-question cap, the spec-integration rules,
   pre/post-execution hook sections — MUST be preserved byte-for-byte.
+- **Front matter is off-limits.** The YAML block between the opening and closing
+  `---` lines must be copied exactly: preserve all field names, values, quotes,
+  and indentation. Do not add, remove, or rename any fields (including
+  `argument-hint`, `source`, `compatibility`, `metadata`, etc.). Do not change
+  quoted values to unquoted or vice versa.
+- **Do not add headings.** Do not insert any `#` heading lines that are not
+  already present in the core command (e.g. do not add `# Speckit Clarify Skill`).
 - Match the target blocks by their **meaning / anchor wording**, not by line
   number. Core may have shifted lines, reworded neighbours, or added sections;
   locate the block by the quoted anchor text and replace it in place.

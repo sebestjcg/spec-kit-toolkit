@@ -11,6 +11,13 @@ this preset makes to the core `speckit.checklist` command. The generator
   command — front matter, scripts, headings, ordering, whitespace, the
   "Unit Tests for English" framing, the category structure, the item-writing
   rules, the pre/post-execution hook sections — MUST be preserved byte-for-byte.
+- **Front matter is off-limits.** The YAML block between the opening and closing
+  `---` lines must be copied exactly: preserve all field names, values, quotes,
+  and indentation. Do not add, remove, or rename any fields (including
+  `argument-hint`, `source`, `compatibility`, `metadata`, etc.). Do not change
+  quoted values to unquoted or vice versa.
+- **Do not add headings.** Do not insert any `#` heading lines that are not
+  already present in the core command (e.g. do not add `# Speckit Checklist Skill`).
 - Match the target block by its **meaning / anchor wording**, not by line
   number.
 - If the target block is **not present** in the current core (upstream already

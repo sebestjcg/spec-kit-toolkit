@@ -32,10 +32,12 @@ empty, resolve the feature automatically (see Prerequisites).
 
 ## Locate the checklist(s)
 
-- Look for checklist files under `FEATURE_DIR/checklists/` (any `*.md`).
+- If `$ARGUMENTS` names a specific file or directory, use that — it takes
+  precedence over auto-discovery below.
+- Otherwise, look for checklist files under `FEATURE_DIR/checklists/` (any
+  `*.md`).
 - If none exist there, look for an inline "review" / "acceptance" checklist
   section inside `FEATURE_DIR/spec.md`.
-- If `$ARGUMENTS` named a specific file or directory, use that instead.
 - If no checklist is found anywhere, report that and stop — do not invent one.
 
 ## Evaluate and tick

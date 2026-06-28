@@ -38,92 +38,91 @@ CONTENT_MARKERS = {
     "speckit.toolkit.research": ["$ARGUMENTS", "Path A", "Path B", "load-bearing", "version", "parallel"],
 }
 
-errors = []
 
-
-def fail(msg):
-    errors.append(msg)
-
-
-def load_manifest():
+def load_manifest(errors):
     if not MANIFEST.exists():
-        fail(f"manifest missing: {MANIFEST}")
+        errors.append(f"manifest missing: {MANIFEST}")
         return None
     data = yaml.safe_load(MANIFEST.read_text(encoding="utf-8"))
     return data
 
 
-def validate_manifest():
+def validate_manifest(errors):
     before = len(errors)
-    data = load_manifest()
+    data = load_manifest(errors)
     if data is None:
         return
     if data.get("schema_version") != "1.0":
-        fail('schema_version must be "1.0"')
+        errors.append('schema_version must be "1.0"')
     ext = data.get("extension", {})
     for field in ("id", "name", "version", "description", "author", "repository", "license"):
         if not ext.get(field):
-            fail(f"extension.{field} missing")
+            errors.append(f"extension.{field} missing")
     if ext.get("id") != "toolkit":
-        fail('extension.id must be "toolkit"')
+        errors.append('extension.id must be "toolkit"')
     if not data.get("requires", {}).get("speckit_version"):
-        fail("requires.speckit_version missing")
+        errors.append("requires.speckit_version missing")
     cmds = data.get("provides", {}).get("commands", [])
     names = [c.get("name") for c in cmds]
     if names != EXPECTED_NAMES:
-        fail(f"provides.commands names mismatch.\n  expected: {EXPECTED_NAMES}\n  got:      {names}")
+        errors.append(f"provides.commands names mismatch.\n  expected: {EXPECTED_NAMES}\n  got:      {names}")
     for c in cmds:
         name, file = c.get("name"), c.get("file")
         if not NAME_RE.match(name or ""):
-            fail(f"name fails regex: {name!r}")
+            errors.append(f"name fails regex: {name!r}")
         if not c.get("description"):
-            fail(f"description missing for {name}")
+            errors.append(f"description missing for {name}")
         if file != f"commands/{name}.md":
-            fail(f"file path for {name} should be 'commands/{name}.md', got {file!r}")
+            errors.append(f"file path for {name} should be 'commands/{name}.md', got {file!r}")
     if len(errors) == before:
         print(f"OK: manifest ({len(cmds)} commands)")
 
 
-def validate_command(name):
+def validate_command(name, errors):
     before = len(errors)
     if name not in CONTENT_MARKERS:
-        fail(f"unknown command: {name}")
+        errors.append(f"unknown command: {name}")
         return
     path = EXT / "commands" / f"{name}.md"
     if not path.exists():
-        fail(f"command file missing: {path}")
+        errors.append(f"command file missing: {path}")
         return
     text = path.read_text(encoding="utf-8")
     if not text.startswith("---"):
-        fail(f"{name}: missing YAML front matter")
+        errors.append(f"{name}: missing YAML front matter")
     fm_end = text.find("---", 3)
     front = text[3:fm_end] if fm_end != -1 else ""
-    if "description:" not in front:
-        fail(f"{name}: front matter missing description")
+    try:
+        fm_data = yaml.safe_load(front)
+        if not isinstance(fm_data, dict) or not fm_data.get("description"):
+            errors.append(f"{name}: front matter missing description")
+    except yaml.YAMLError:
+        errors.append(f"{name}: front matter failed to parse as YAML")
     low = text.lower()
     for marker in CONTENT_MARKERS[name]:
         if marker.lower() not in low:
-            fail(f"{name}: missing required content marker {marker!r}")
+            errors.append(f"{name}: missing required content marker {marker!r}")
     if len(errors) == before:
         print(f"OK: command {name}")
 
 
 def main():
+    errors = []
     if len(sys.argv) < 2:
         print(__doc__)
         sys.exit(2)
     mode = sys.argv[1]
     if mode == "manifest":
-        validate_manifest()
+        validate_manifest(errors)
     elif mode == "command":
         if len(sys.argv) < 3:
             print("usage: validate_toolkit.py command <name>")
             sys.exit(2)
-        validate_command(sys.argv[2])
+        validate_command(sys.argv[2], errors)
     elif mode == "all":
-        validate_manifest()
+        validate_manifest(errors)
         for n in EXPECTED_NAMES:
-            validate_command(n)
+            validate_command(n, errors)
     else:
         print(f"unknown mode: {mode}")
         sys.exit(2)

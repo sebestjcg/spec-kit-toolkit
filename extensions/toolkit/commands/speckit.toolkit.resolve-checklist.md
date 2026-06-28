@@ -20,8 +20,9 @@ $ARGUMENTS
 
 `$ARGUMENTS` may contain, in any order:
 
-- A **requirements-docs path** (a directory or file of requirements; default
-  candidate: `documentation/requirements/`).
+- A **requirements-docs path** (a directory or file of requirements). If it is
+  not supplied, ask the user — you may suggest `documentation/requirements/` as
+  a default.
 - A **codebase path** (a directory to search for the answer in source code).
 - A checklist path / feature-directory override.
 

@@ -45,12 +45,18 @@ For each feature / feature-group of tasks in `tasks.md`, check that it contains:
 ## Apply
 
 - For each feature missing these, insert the missing task entries in the correct
-  position, matching the existing task numbering / checkbox style in `tasks.md`,
-  for example:
-  - `- [ ] Write a failing test for <behavior> (red) before implementing.`
-  - `- [ ] Implement the minimal code to make the test pass (green).`
-  - `- [ ] Refactor with tests green; keep the domain model clean (refactor).`
-  - `- [ ] Verify <feature> end-to-end with Playwright.`
+  position, **matching whichever style `tasks.md` already uses** — checkbox OR
+  numbered (e.g. `T001`-style). Do not mix styles within a file.
+  - Checkbox-style examples:
+    - `- [ ] Write a failing test for <behavior> (red) before implementing.`
+    - `- [ ] Implement the minimal code to make the test pass (green).`
+    - `- [ ] Refactor with tests green; keep the domain model clean (refactor).`
+    - `- [ ] Verify <feature> end-to-end with Playwright.`
+  - Numbered-style examples (use when `tasks.md` uses `T001` entries):
+    - `T042 Write a failing test for <behavior> (red) before implementing.`
+    - `T043 Implement the minimal code to make the test pass (green).`
+    - `T044 Refactor with tests green; keep the domain model clean (refactor).`
+    - `T045 Verify <feature> end-to-end with Playwright.`
 - Do not duplicate steps that already exist. Preserve existing tasks, numbering,
   and formatting. Edit `tasks.md` **in place**.
 

@@ -986,8 +986,10 @@ and **excludes** `scripts/validate_toolkit.py` (which lives at repo root, not in
 `extensions/toolkit/`).
 
 > Note: `package.sh` stamps `version:` from the locally installed `specify` CLI.
-> If `specify` is not on PATH it prints a warning and leaves `version: "0.0.0"`
-> unchanged — the zip still builds. That is acceptable for this verification step.
+> It requires `specify` on PATH — it exits 1 if absent (via `command -v specify || exit 1`
+> at the top of the script, before any zip is built). This verification step must
+> therefore be run on a host with `specify` installed. The graceful version-stamp
+> fallback only applies once past that guard.
 
 - [ ] **Step 5: Inspect the zip contents**
 

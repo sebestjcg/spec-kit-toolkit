@@ -43,7 +43,7 @@ The delta files are the durable source of truth.
 ## Installation
 
 ```bash
-specify preset add --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/v0.9.0/spec-kit-toolkit-preset-0.8.17.zip
+specify preset add --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/vX.Y.Z/spec-kit-toolkit-preset-X.Y.Z.zip
 ```
 
 The zip filename reflects the spec-kit version the commands were generated against.

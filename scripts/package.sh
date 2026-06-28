@@ -65,6 +65,7 @@ fi
 
 mkdir -p "$OUT_DIR"
 ZIPS=()
+INSTALL_LINES=()
 GITHUB_SLUG="$(git -C "$REPO_DIR" remote get-url origin 2>/dev/null | sed 's/.*github.com[:/]//' | sed 's/\.git$//' || true)"
 
 package_component() {
@@ -118,9 +119,11 @@ print(f"  → {out} ({out.stat().st_size // 1024}KB, {len(zf.namelist())} files)
 PYEOF
 
   ZIPS+=("$zip_path")
-  [[ -n "$TAG" && -n "$GITHUB_SLUG" ]] && \
-    printf '  specify %s add --from https://github.com/%s/releases/download/%s/%s\n' \
-      "$type" "$GITHUB_SLUG" "$TAG" "$zip_name"
+  if [[ -n "$TAG" && -n "$GITHUB_SLUG" ]]; then
+    local from_url="https://github.com/$GITHUB_SLUG/releases/download/$TAG/$zip_name"
+    printf '  specify %s add --from %s\n' "$type" "$from_url"
+    INSTALL_LINES+=("specify $type add --from $from_url")
+  fi
 }
 
 if [[ -d "$REPO_DIR/presets" ]]; then
@@ -140,9 +143,12 @@ info "done. zips in $OUT_DIR/"
 if [[ "$RELEASE" -eq 1 ]]; then
   [[ ${#ZIPS[@]} -gt 0 ]] || { err "no zips built — nothing to release"; exit 1; }
   info "creating GitHub Release $TAG..."
+  local install_notes
+  install_notes="## Install"$'\n\n''```bash'$'\n'"$(printf '%s\n' "${INSTALL_LINES[@]}")"$'\n''```'
   gh release create "$TAG" "${ZIPS[@]}" \
     --repo "$GITHUB_SLUG" \
     --title "$TAG" \
+    --notes "$install_notes" \
     --generate-notes
   info "release $TAG created with ${#ZIPS[@]} asset(s)"
 fi

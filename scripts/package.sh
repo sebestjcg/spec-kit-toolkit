@@ -78,10 +78,10 @@ package_component() {
   [[ -z "$id" || -z "$version" ]] && { err "could not read id/version from $config"; return 1; }
   [[ -n "$ONLY" && "$id" != "$ONLY" ]] && return 0
 
-  local repo_name type
+  local repo_name type zip_name
   repo_name="$(basename "$REPO_DIR")"
   type="${config_file%.yml}"
-  local zip_name="${repo_name}-${type}-${version}.zip"
+  zip_name="${repo_name}-${type}-${version}.zip"
   local zip_path="$OUT_DIR/$zip_name"
 
   info "packaging $id v$version → dist/$zip_name"

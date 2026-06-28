@@ -25,7 +25,7 @@ arguments.
 ## Installation
 
 ```bash
-specify extension add --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/v0.9.0/spec-kit-toolkit-extension-0.8.17.zip
+specify extension add toolkit --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/vX.Y.Z/spec-kit-toolkit-extension-X.Y.Z.zip
 ```
 
 The zip filename reflects the spec-kit version stamped at build time; the release
@@ -48,7 +48,7 @@ The extension ships static command files, so there is nothing to regenerate —
 just stamp the version, tag, and publish. `scripts/package.sh` stamps
 `extension.yml` with your installed spec-kit version and builds
 `spec-kit-toolkit-extension-<version>.zip` with `extension.yml` at the zip root (so
-`specify extension add --from` works on the release asset).
+`specify extension add <id> --from <url>` works on the release asset).
 
 ```bash
 # 1. Stamp extension.yml with the current spec-kit version and build the zip (no release yet)
@@ -62,7 +62,7 @@ git tag vX.Y.Z && git push --tags
 # 3. Build and publish the GitHub Release (auto-detects the tag from HEAD)
 scripts/package.sh --only toolkit
 
-# 4. Update the --from URL above with the new tag and filename
+# 4. Update the install URL above with the new tag and filename
 ```
 
 `--only toolkit` scopes packaging to this extension, so other presets/extensions

@@ -43,7 +43,7 @@ The delta files are the durable source of truth.
 ## Installation
 
 ```bash
-specify preset add --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/vX.Y.Z/spec-kit-toolkit-preset-X.Y.Z.zip
+specify preset add https://github.com/sebestjcg/spec-kit-toolkit/releases/download/vX.Y.Z/spec-kit-toolkit-preset-X.Y.Z.zip
 ```
 
 The zip filename reflects the spec-kit version the commands were generated against.
@@ -71,7 +71,7 @@ git tag vX.Y.Z && git push --tags
 # 3. Build zip and publish GitHub Release (auto-detects tag from HEAD)
 scripts/package.sh
 
-# 4. Update the --from URL in this README with the new tag
+# 4. Update the install URL in this README with the new tag
 ```
 
 Requires `specify` and `claude` CLIs on `PATH`. Pass `--core-dir` to

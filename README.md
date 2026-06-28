@@ -8,6 +8,12 @@ Tooling and presets for [Spec Kit](https://github.com/github/spec-kit).
 | ------ | ------------ |
 | [`claude-ask-questions`](./presets/claude-ask-questions) | Renders `/speckit.clarify` and `/speckit.checklist` questions with Claude Code's native `AskUserQuestion` picker (recommendation + reasoning on every prompt). |
 
+## Extensions
+
+| Extension | What it does |
+| --------- | ------------ |
+| [`toolkit`](./extensions/toolkit) | Six namespaced workflow commands: tick/resolve review checklists, audit plans and tasks for cross-references and DDD red-green-refactor + Playwright mandates, and run a Path A/Path B decision-gate research pass. |
+
 ### Design principle: presets that survive core updates
 
 Presets here avoid the trap of shipping a frozen full copy of a core command

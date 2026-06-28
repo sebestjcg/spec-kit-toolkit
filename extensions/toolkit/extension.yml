@@ -3,7 +3,7 @@ schema_version: "1.0"
 extension:
   id: toolkit
   name: "Spec Kit Toolkit"
-  version: "0.0.0"
+  version: "0.8.17"
   description: "Six workflow commands that tick/resolve review checklists, audit plans and tasks for cross-references and DDD red-green-refactor + Playwright mandates, and run a Path A/Path B decision-gate research pass against spec-kit artifacts."
   author: "sebestjcg"
   repository: "https://github.com/sebestjcg/spec-kit-toolkit"

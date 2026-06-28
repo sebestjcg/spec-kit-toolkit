@@ -143,7 +143,6 @@ info "done. zips in $OUT_DIR/"
 if [[ "$RELEASE" -eq 1 ]]; then
   [[ ${#ZIPS[@]} -gt 0 ]] || { err "no zips built — nothing to release"; exit 1; }
   info "creating GitHub Release $TAG..."
-  local install_notes
   install_notes="## Install"$'\n\n''```bash'$'\n'"$(printf '%s\n' "${INSTALL_LINES[@]}")"$'\n''```'
   gh release create "$TAG" "${ZIPS[@]}" \
     --repo "$GITHUB_SLUG" \

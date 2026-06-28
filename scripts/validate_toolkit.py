@@ -54,6 +54,7 @@ def load_manifest():
 
 
 def validate_manifest():
+    before = len(errors)
     data = load_manifest()
     if data is None:
         return
@@ -79,11 +80,12 @@ def validate_manifest():
             fail(f"description missing for {name}")
         if file != f"commands/{name}.md":
             fail(f"file path for {name} should be 'commands/{name}.md', got {file!r}")
-    if not errors:
+    if len(errors) == before:
         print(f"OK: manifest ({len(cmds)} commands)")
 
 
 def validate_command(name):
+    before = len(errors)
     if name not in CONTENT_MARKERS:
         fail(f"unknown command: {name}")
         return
@@ -102,7 +104,7 @@ def validate_command(name):
     for marker in CONTENT_MARKERS[name]:
         if marker.lower() not in low:
             fail(f"{name}: missing required content marker {marker!r}")
-    if not [e for e in errors if name in e]:
+    if len(errors) == before:
         print(f"OK: command {name}")
 
 
@@ -114,6 +116,9 @@ def main():
     if mode == "manifest":
         validate_manifest()
     elif mode == "command":
+        if len(sys.argv) < 3:
+            print("usage: validate_toolkit.py command <name>")
+            sys.exit(2)
         validate_command(sys.argv[2])
     elif mode == "all":
         validate_manifest()

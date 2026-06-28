@@ -22,19 +22,58 @@ changed. Each command resolves the active feature via core spec-kit's
 `check-prerequisites.sh --json` and accepts an optional path override in its
 arguments.
 
-## Install
-
-From a published release:
+## Installation
 
 ```bash
-specify extension add --from <release-zip-url>
+specify extension add --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/v0.7.0/toolkit-0.8.17.zip
 ```
 
-From a local clone (development):
+The zip filename reflects the spec-kit version stamped at build time; the release
+tag is independent of it. Check the [releases page](https://github.com/sebestjcg/spec-kit-toolkit/releases)
+for the latest tag and filename.
+
+Or from a local clone (development):
 
 ```bash
 specify extension add --dev ./extensions/toolkit
 ```
+
+Run `specify extension list` afterward to confirm `toolkit` is registered. The
+six commands then appear to your agent as `/speckit.toolkit.tick-checklist`,
+`/speckit.toolkit.resolve-checklist`, and so on.
+
+## Releasing a new version
+
+The extension ships static command files, so there is nothing to regenerate —
+just stamp the version, tag, and publish. `scripts/package.sh` stamps
+`extension.yml` with your installed spec-kit version and builds
+`toolkit-<version>.zip` with `extension.yml` at the zip root (so
+`specify extension add --from` works on the release asset).
+
+```bash
+# 1. Stamp extension.yml with the current spec-kit version and build the zip (no release yet)
+scripts/package.sh --only toolkit --no-release
+
+# 2. Commit the version bump and tag
+git add extensions/toolkit/extension.yml
+git commit -m "chore: stamp toolkit version against spec-kit vX.Y.Z"
+git tag vX.Y.Z && git push --tags
+
+# 3. Build and publish the GitHub Release (auto-detects the tag from HEAD)
+scripts/package.sh --only toolkit
+
+# 4. Update the --from URL above with the new tag and filename
+```
+
+`--only toolkit` scopes packaging to this extension, so other presets/extensions
+in the repo are left untouched.
+
+## Requirements
+
+- [Spec Kit](https://github.com/github/spec-kit) `>= 0.6.0`
+- For releasing: the `specify` and `gh` CLIs on `PATH` — `specify` stamps the
+  version, `gh` creates the GitHub Release. Pass `--no-release` to build the zip
+  without publishing.
 
 ## Why an extension (not a preset)?
 

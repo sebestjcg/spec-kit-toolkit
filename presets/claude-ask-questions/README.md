@@ -43,7 +43,7 @@ The delta files are the durable source of truth.
 ## Installation
 
 ```bash
-specify preset add https://github.com/sebestjcg/spec-kit-toolkit/releases/download/vX.Y.Z/spec-kit-toolkit-preset-X.Y.Z.zip
+specify preset add claude-ask-questions --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/vX.Y.Z/spec-kit-toolkit-preset-X.Y.Z.zip
 ```
 
 The zip filename reflects the spec-kit version the commands were generated against.

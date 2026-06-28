@@ -4,7 +4,7 @@
 # and optionally create a GitHub Release with those zips as assets.
 #
 # Each zip has its config file (preset.yml / extension.yml) at the root so that
-# `specify preset add <url>` / `specify extension add <url>` work
+# `specify preset add <id> --from <url>` / `specify extension add <id> --from <url>` work
 # with GitHub Release assets.
 #
 # Usage:
@@ -121,8 +121,8 @@ PYEOF
   ZIPS+=("$zip_path")
   if [[ -n "$TAG" && -n "$GITHUB_SLUG" ]]; then
     local from_url="https://github.com/$GITHUB_SLUG/releases/download/$TAG/$zip_name"
-    printf '  specify %s add %s\n' "$type" "$from_url"
-    INSTALL_LINES+=("specify $type add $from_url")
+    printf '  specify %s add %s --from %s\n' "$type" "$id" "$from_url"
+    INSTALL_LINES+=("specify $type add $id --from $from_url")
   fi
 }
 

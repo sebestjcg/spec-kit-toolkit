@@ -1,0 +1,44 @@
+schema_version: "1.0"
+
+extension:
+  id: toolkit
+  name: "Spec Kit Toolkit"
+  version: "0.0.0"
+  description: "Six workflow commands that tick/resolve review checklists, audit plans and tasks for cross-references and DDD red-green-refactor + Playwright mandates, and run a Path A/Path B decision-gate research pass against spec-kit artifacts."
+  author: "sebestjcg"
+  repository: "https://github.com/sebestjcg/spec-kit-toolkit"
+  license: "MIT"
+  category: "docs"
+  effect: "read-write"
+
+requires:
+  speckit_version: ">=0.6.0"
+
+provides:
+  commands:
+    - name: speckit.toolkit.tick-checklist
+      file: commands/speckit.toolkit.tick-checklist.md
+      description: "Check off review/acceptance checklist items that the feature spec demonstrably satisfies, leaving unmet items unchecked."
+    - name: speckit.toolkit.resolve-checklist
+      file: commands/speckit.toolkit.resolve-checklist.md
+      description: "Resolve unchecked checklist items from requirements docs, then the codebase, then by asking the user via AskUserQuestion in batches of 5."
+    - name: speckit.toolkit.validate-plan
+      file: commands/speckit.toolkit.validate-plan.md
+      description: "Audit plan.md and its implementation-detail files and insert missing cross-references from implementation steps to the relevant detail sections."
+    - name: speckit.toolkit.validate-testing
+      file: commands/speckit.toolkit.validate-testing.md
+      description: "Ensure plan.md explicitly mandates DDD red-green-refactor TDD and post-feature Playwright end-to-end verification."
+    - name: speckit.toolkit.validate-tasks
+      file: commands/speckit.toolkit.validate-tasks.md
+      description: "Ensure tasks.md contains explicit red-green-refactor task steps and Playwright end-to-end verification entries for each feature."
+    - name: speckit.toolkit.research
+      file: commands/speckit.toolkit.research.md
+      description: "Run a Path A/Path B decision-gate research pass: pin versions into research.md and fan out parallel, version-pinned research subagents."
+
+tags:
+  - "checklist"
+  - "plan"
+  - "tasks"
+  - "research"
+  - "tdd"
+  - "playwright"

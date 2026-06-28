@@ -25,7 +25,7 @@ arguments.
 ## Installation
 
 ```bash
-specify extension add --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/v0.7.0/toolkit-0.8.17.zip
+specify extension add --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/v0.7.0/spec-kit-toolkit-extension-0.8.17.zip
 ```
 
 The zip filename reflects the spec-kit version stamped at build time; the release
@@ -47,7 +47,7 @@ six commands then appear to your agent as `/speckit.toolkit.tick-checklist`,
 The extension ships static command files, so there is nothing to regenerate —
 just stamp the version, tag, and publish. `scripts/package.sh` stamps
 `extension.yml` with your installed spec-kit version and builds
-`toolkit-<version>.zip` with `extension.yml` at the zip root (so
+`spec-kit-toolkit-extension-<version>.zip` with `extension.yml` at the zip root (so
 `specify extension add --from` works on the release asset).
 
 ```bash

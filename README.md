@@ -20,3 +20,9 @@ generator that re-applies that delta onto the **current** core command via
 "hand-merge a diverged file." See
 [`presets/claude-ask-questions/README.md`](./presets/claude-ask-questions/README.md)
 for the full mechanism.
+
+## Extensions
+
+| Extension | What it does |
+| --------- | ------------ |
+| [`toolkit`](./extensions/toolkit) | Six namespaced workflow commands: tick/resolve review checklists, audit plans and tasks for cross-references and DDD red-green-refactor + Playwright mandates, and run a Path A/Path B decision-gate research pass. |

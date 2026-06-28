@@ -15,7 +15,7 @@
 #   --no-release    Build zips only, skip creating the GitHub Release
 #   --tag TAG       Git tag to use for the release (default: auto-detected from HEAD)
 #
-# Zip filenames: <id>-<version>.zip  (version comes from preset.yml / extension.yml)
+# Zip filenames: <repo-name>-<type>-<version>.zip  (version comes from preset.yml / extension.yml)
 # Requires: bash, python3 (stdlib only), gh.
 
 set -euo pipefail
@@ -78,7 +78,10 @@ package_component() {
   [[ -z "$id" || -z "$version" ]] && { err "could not read id/version from $config"; return 1; }
   [[ -n "$ONLY" && "$id" != "$ONLY" ]] && return 0
 
-  local zip_name="${id}-${version}.zip"
+  local repo_name type
+  repo_name="$(basename "$REPO_DIR")"
+  type="${config_file%.yml}"
+  local zip_name="${repo_name}-${type}-${version}.zip"
   local zip_path="$OUT_DIR/$zip_name"
 
   info "packaging $id v$version → dist/$zip_name"

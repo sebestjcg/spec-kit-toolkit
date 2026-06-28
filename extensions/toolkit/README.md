@@ -25,7 +25,7 @@ arguments.
 ## Installation
 
 ```bash
-specify extension add --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/v0.7.0/spec-kit-toolkit-extension-0.8.17.zip
+specify extension add --from https://github.com/sebestjcg/spec-kit-toolkit/releases/download/v0.9.0/spec-kit-toolkit-extension-0.8.17.zip
 ```
 
 The zip filename reflects the spec-kit version stamped at build time; the release

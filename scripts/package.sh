@@ -65,6 +65,7 @@ fi
 
 mkdir -p "$OUT_DIR"
 ZIPS=()
+GITHUB_SLUG="$(git -C "$REPO_DIR" remote get-url origin 2>/dev/null | sed 's/.*github.com[:/]//' | sed 's/\.git$//' || true)"
 
 package_component() {
   local src_dir="$1" config_file="$2"
@@ -117,6 +118,9 @@ print(f"  → {out} ({out.stat().st_size // 1024}KB, {len(zf.namelist())} files)
 PYEOF
 
   ZIPS+=("$zip_path")
+  [[ -n "$TAG" && -n "$GITHUB_SLUG" ]] && \
+    printf '  specify %s add --from https://github.com/%s/releases/download/%s/%s\n' \
+      "$type" "$GITHUB_SLUG" "$TAG" "$zip_name"
 }
 
 if [[ -d "$REPO_DIR/presets" ]]; then
@@ -137,7 +141,7 @@ if [[ "$RELEASE" -eq 1 ]]; then
   [[ ${#ZIPS[@]} -gt 0 ]] || { err "no zips built — nothing to release"; exit 1; }
   info "creating GitHub Release $TAG..."
   gh release create "$TAG" "${ZIPS[@]}" \
-    --repo "$(git -C "$REPO_DIR" remote get-url origin | sed 's/.*github.com[:/]//' | sed 's/\.git$//')" \
+    --repo "$GITHUB_SLUG" \
     --title "$TAG" \
     --generate-notes
   info "release $TAG created with ${#ZIPS[@]} asset(s)"
